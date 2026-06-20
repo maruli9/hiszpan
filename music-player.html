@@ -102,9 +102,9 @@ li.active {
 
 <script>
 const songs = [
-  "muzyka/song1.wav",
-  "muzyka/song2.wav",
-  "muzyka/song3.wav"
+  "muzyka/song1.mp3",
+  "muzyka/song2.mp3",
+  "muzyka/song3.mp3"
 ];
 
 let currentIndex = 0;
@@ -113,7 +113,6 @@ const audio = document.getElementById("audio");
 const playlist = document.getElementById("playlist");
 const nowPlaying = document.getElementById("nowPlaying");
 
-// budowanie listy
 function loadPlaylist() {
   playlist.innerHTML = "";
 
@@ -123,8 +122,7 @@ function loadPlaylist() {
 
     li.onclick = () => {
       currentIndex = index;
-      loadSong();
-      startSong();
+      playSong(); // 🔥 1 akcja tylko
     };
 
     playlist.appendChild(li);
@@ -135,19 +133,18 @@ function loadPlaylist() {
 
 function loadSong() {
   audio.src = songs[currentIndex];
-  nowPlaying.textContent = "Teraz gra: " + songs[currentIndex].split("/").pop();
+  nowPlaying.textContent =
+    "Teraz gra: " + songs[currentIndex].split("/").pop();
   highlight();
 }
 
-function highlight() {
-  document.querySelectorAll("li").forEach((li, i) => {
-    li.classList.toggle("active", i === currentIndex);
-  });
-}
+function playSong() {
+  loadSong();        // ustaw źródło
+  audio.load();      // wymusza reload (ważne na mobile)
 
-function startSong() {
-  if (!audio.src) loadSong();
-  audio.play();
+  audio.play().catch(err => {
+    console.log("Play blocked:", err);
+  });
 }
 
 function stopSong() {
@@ -157,17 +154,20 @@ function stopSong() {
 
 function nextSong() {
   currentIndex = (currentIndex + 1) % songs.length;
-  loadSong();
-  startSong();
+  playSong();
 }
 
 function prevSong() {
   currentIndex = (currentIndex - 1 + songs.length) % songs.length;
-  loadSong();
-  startSong();
+  playSong();
 }
 
-// init
+function highlight() {
+  document.querySelectorAll("li").forEach((li, i) => {
+    li.classList.toggle("active", i === currentIndex);
+  });
+}
+
 loadPlaylist();
 loadSong();
 </script>
