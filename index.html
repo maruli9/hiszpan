@@ -9,13 +9,9 @@
 <meta name="theme-color" content="#0f172a">
 </head>
 <style>
-ul {
-  margin: 0;
-  padding: 0;
-  list-style: none;
-}
+
 .section {
-  display: block;
+  display: none;
 }
  
 
@@ -38,8 +34,9 @@ ul {
 
     <!-- 🔥 TYLKO LINK, BEZ SEKCJI -->
     <li>
-  <a href="music-player.html" onclick="closeMenu()">Inne</a>
-</li>
+  <a href="music-player.html" class="nav-link">
+    Inne
+  </a>
 </li>
 </ul>
 </nav>
@@ -66,8 +63,6 @@ ul {
   <div class="container">
     <button onclick="getRandomQuote()">🎲 Losuj cytat</button>
     <h1>KOLEJNY CYTAT</h1>
-    
-    
     
     
 
@@ -125,11 +120,7 @@ function showSection(section) {
 }
 
 function toggleMenu() {
-  document.getElementById("navLinks").classList.toggle("active");
-}
-
-function closeMenu() {
-  document.getElementById("navLinks").classList.remove("active");
+    document.getElementById("navLinks").classList.toggle("active");
 }
 </script>
 
