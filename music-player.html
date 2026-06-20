@@ -8,14 +8,10 @@
 body {
   font-family: Arial, sans-serif;
   background: #0f172a;
-  color: #e5e5e5;
+  color: white;
   text-align: center;
   margin: 0;
   padding: 20px;
-}
-
-h1 {
-  margin-bottom: 10px;
 }
 
 .player {
@@ -24,48 +20,34 @@ h1 {
   background: #1e293b;
   padding: 20px;
   border-radius: 12px;
-  box-shadow: 0 0 10px rgba(0,0,0,0.4);
 }
 
 button {
-  background: #2563eb;
-  color: white;
-  border: none;
-  padding: 10px 15px;
+  padding: 12px;
   margin: 5px;
+  border: none;
   border-radius: 8px;
   cursor: pointer;
-}
-
-button:hover {
-  background: #1d4ed8;
+  background: #2563eb;
+  color: white;
+  font-size: 16px;
 }
 
 button.stop {
   background: #dc2626;
 }
 
-button.stop:hover {
-  background: #b91c1c;
-}
-
 ul {
   list-style: none;
   padding: 0;
-  margin-top: 20px;
 }
 
 li {
-  padding: 10px;
-  margin: 5px 0;
   background: #111827;
+  margin: 8px 0;
+  padding: 10px;
   border-radius: 8px;
   cursor: pointer;
-  transition: 0.2s;
-}
-
-li:hover {
-  background: #374151;
 }
 
 li.active {
@@ -76,100 +58,94 @@ li.active {
 </head>
 
 <body>
-<button onclick="window.location.href='index.html'">
-⬅ Powrót
-</button>
+
 <h1>🎵 Music Player</h1>
+
+<button onclick="window.location.href='index.html'">⬅ Powrót</button>
 
 <div class="player">
 
   <audio id="audio"></audio>
 
   <div>
-    <button onclick="startSong()">▶ Start</button>
-    <button class="stop" onclick="stopSong()">⏹ Stop</button>
+    <button onclick="play()">▶ Play</button>
+    <button class="stop" onclick="stop()">⏹ Stop</button>
   </div>
 
   <div>
-    <button onclick="prevSong()">⬅ Prev</button>
-    <button onclick="nextSong()">Next ➡</button>
+    <button onclick="prev()">⬅ Prev</button>
+    <button onclick="next()">Next ➡</button>
   </div>
 
-  <h3 id="nowPlaying">Nie wybrano utworu</h3>
+  <h3 id="now">Brak utworu</h3>
 
-  <ul id="playlist"></ul>
+  <ul id="list"></ul>
+
 </div>
 
 <script>
 const songs = [
-  "muzyka/song1.mp3",
-  "muzyka/song2.mp3",
+  "muzyka/song1.wav",
+  "muzyka/song2.wav",
   "muzyka/song3.mp3"
 ];
 
-let currentIndex = 0;
+let index = 0;
 
 const audio = document.getElementById("audio");
-const playlist = document.getElementById("playlist");
-const nowPlaying = document.getElementById("nowPlaying");
+const list = document.getElementById("list");
+const now = document.getElementById("now");
 
-function loadPlaylist() {
-  playlist.innerHTML = "";
-
-  songs.forEach((song, index) => {
-    const li = document.createElement("li");
-    li.textContent = "Utwór " + (index + 1);
-
-    li.onclick = () => {
-      currentIndex = index;
-      playSong(); // 🔥 1 akcja tylko
-    };
-
-    playlist.appendChild(li);
-  });
-
+function load() {
+  audio.src = songs[index];
+  now.textContent = songs[index].split("/").pop();
   highlight();
 }
 
-function loadSong() {
-  audio.src = songs[currentIndex];
-  nowPlaying.textContent =
-    "Teraz gra: " + songs[currentIndex].split("/").pop();
-  highlight();
-}
-
-function playSong() {
-  loadSong();        // ustaw źródło
-  audio.load();      // wymusza reload (ważne na mobile)
-
-  audio.play().catch(err => {
-    console.log("Play blocked:", err);
+function play() {
+  audio.play().catch(e => {
+    console.log("blocked:", e);
   });
 }
 
-function stopSong() {
+function stop() {
   audio.pause();
   audio.currentTime = 0;
 }
 
-function nextSong() {
-  currentIndex = (currentIndex + 1) % songs.length;
-  playSong();
+function next() {
+  index = (index + 1) % songs.length;
+  load();
+  play();
 }
 
-function prevSong() {
-  currentIndex = (currentIndex - 1 + songs.length) % songs.length;
-  playSong();
+function prev() {
+  index = (index - 1 + songs.length) % songs.length;
+  load();
+  play();
 }
+
+// lista
+songs.forEach((s, i) => {
+  const li = document.createElement("li");
+  li.textContent = "Utwór " + (i + 1);
+
+  li.onclick = () => {
+    index = i;
+    load();
+    play();
+  };
+
+  list.appendChild(li);
+});
 
 function highlight() {
   document.querySelectorAll("li").forEach((li, i) => {
-    li.classList.toggle("active", i === currentIndex);
+    li.classList.toggle("active", i === index);
   });
 }
 
-loadPlaylist();
-loadSong();
+load();
 </script>
 
 </body>
